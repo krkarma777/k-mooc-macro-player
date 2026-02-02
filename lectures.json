@@ -25,14 +25,14 @@
         "url": "https://lms.kmooc.kr/mod/vod/viewer.php?id=2110520",
         "playTime": "32:44",
         "totalSeconds": 1964,
-        "isCompleted": false
+        "isCompleted": true
     },
     {
         "title": "1차시. 이차원 운동과 벡터\n동영상",
         "url": "https://lms.kmooc.kr/mod/vod/viewer.php?id=2110522",
         "playTime": "29:20",
         "totalSeconds": 1760,
-        "isCompleted": false
+        "isCompleted": true
     },
     {
         "title": "2차시. 동역학-뉴턴 운동 법칙\n동영상",
