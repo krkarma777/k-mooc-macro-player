@@ -1,10 +1,21 @@
 import json
 import time
 import random
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+
+def notify_mac(title, text):
+    """
+    맥OS 알림 센터에 메시지를 띄우는 함수
+    """
+    # 쉘 명령어 실행을 위해 텍스트 내의 따옴표 이스케이프 처리
+    safe_title = title.replace("'", "")
+    safe_text = text.replace("'", "")
+    cmd = f"osascript -e 'display notification \"{safe_text}\" with title \"{safe_title}\" sound name \"Glass\"'"
+    os.system(cmd)
 
 def main():
     # 1. 초기 설정 (탐지 회피 옵션 추가)
@@ -72,12 +83,20 @@ def main():
             
             time.sleep(wait_time)
             
-            print(f"[{title}] 수강 완료 처리 예상 시간 경과.")
+            completion_msg = f"[{title}] 수강 완료 처리 예상 시간 경과."
+            print(completion_msg)
+            # 강의 완료 알림
+            notify_mac("강의 완료", f"{title} 시청 끝")
 
-        print("\n모든 강의 수강이 완료되었습니다.")
+        final_msg = "모든 강의 수강이 완료되었습니다."
+        print(f"\n{final_msg}")
+        # 전체 완료 알림
+        notify_mac("K-MOOC 봇", final_msg)
 
     except Exception as e:
-        print(f"❌ 오류 발생: {e}")
+        err_msg = f"오류 발생: {e}"
+        print(f"❌ {err_msg}")
+        notify_mac("K-MOOC 봇 에러", str(e))
     finally:
         print("브라우저를 종료합니다.")
         driver.quit()
