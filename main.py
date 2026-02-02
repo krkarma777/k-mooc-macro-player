@@ -6,6 +6,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def notify_mac(title, text):
     """
@@ -67,19 +70,34 @@ def main():
             print(f"이동 URL: {url}")
             driver.get(url)
             
-            # 로딩 대기 (네트워크 상황 고려하여 랜덤)
-            load_delay = random.randint(5, 10)
-            print(f"페이지 로딩 대기 ({load_delay}초)...")
-            time.sleep(load_delay)
-            
-            # 인간적인 시청 패턴 시뮬레이션:
+            # 1. 페이지 로딩 대기 (네트워크 상황 고려하여 랜덤)
+            time.sleep(random.randint(3, 6))
+
+            # 2. 재생 버튼 강제 클릭 시도
+            try:
+                # Video.js의 큰 재생 버튼이 클릭 가능할 때까지 최대 10초 대기 후 클릭
+                play_btn = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, ".vjs-big-play-button"))
+                )
+                play_btn.click()
+                print("   🖱️ 재생 버튼 클릭 성공")
+            except Exception:
+                # 버튼을 못 찾았거나 이미 재생 중인 경우 (포스터 클릭 시도)
+                try:
+                    poster = driver.find_element(By.CSS_SELECTOR, ".vjs-poster")
+                    poster.click()
+                    print("   🖱️ 포스터 이미지 클릭 성공")
+                except:
+                    print("   ⚠️ 재생 버튼/포스터를 찾지 못했습니다. (이미 재생 중이거나 자동 재생됨)")
+
+            # 3. 인간적인 시청 패턴 시뮬레이션:
             # 영상 길이 + (10초 ~ 60초 사이의 랜덤한 여유 시간)
             human_delay = random.randint(10, 60)
             wait_time = total_seconds + human_delay
             
             # 로그에 남는 시간이 너무 기계적이지 않게 표시
             finish_time = time.strftime("%H:%M:%S", time.localtime(time.time() + wait_time))
-            print(f"⏳ {wait_time}초 대기 중... (예상 종료: {finish_time})")
+            print(f"   ⏳ {wait_time}초 대기 중... (예상 종료: {finish_time})")
             
             time.sleep(wait_time)
             
